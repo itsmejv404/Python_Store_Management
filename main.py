@@ -1,42 +1,94 @@
-import mysql.connector
+import tkinter as tk
+from tkinter import ttk
+  
+ 
+LARGEFONT =("Verdana", 35)
 
-from tkinter import *
-master = Tk()
-master.geometry("50x0")
-master.title("User Login")
+class tkinterApp(tk.Tk):
+     
+    # __init__ function for class tkinterApp
+    def __init__(self, *args, **kwargs):
+         
+        # __init__ function for class Tk
+        tk.Tk.__init__(self, *args, **kwargs)
+        
+        # creating a container
+        container = tk.Frame(self) 
+        container.pack(side = "top", fill = "both", expand = True)
+        container.grid_rowconfigure(0, weight = 1)
+        container.grid_columnconfigure(0, weight = 1)
+  
+        # initializing frames to an empty array
+        self.frames = {} 
+        
+        # iterating through a tuple consisting
+        # of the different page layouts
+        for F in (StartPage, Page1, Page2,LoginScreen):
+  
+            frame = F(container, self)
+  
+            # initializing frame of that object from
+            # startpage, page1, page2 respectively with
+            # for loop
+            self.frames[F] = frame
+  
+            frame.grid(row = 0, column = 0, sticky ="nsew")
+  
+        self.show_frame(StartPage)
+  
+    # to display the current frame passed as
+    # parameter
+    def show_frame(self, cont):
+        frame = self.frames[cont]
+        frame.tkraise()
 
-from sql import Database
-# db = Database()
-# firstname = 'Jayavighnesh'
-# lastname = 'B K'
-# email = 'bkjv2006@gmail.com'
-# password = 'Jayavighnesh'
-# phonenumber = '9344272929'
-# doornum = '105'
-# street = 'Pillayar Koil Street'
-# area = 'Ammapet Main Road'
-# city = 'Salem'
-# photo = 'image'
-# role = 'Owner'
-# grade = 3
-# dateofbirth = '01/01/2006'
-# incomefromemp = 1000
-# salary = 100000
-# remarks = 'I am Owner da!!'
+  
+# first window frame startpage
+  
+class StartPage(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        button1 = ttk.Button(self, text ="Page 1",
+        command = lambda : controller.show_frame(Page1))
+        button1.grid(row = 1, column = 1, padx = 10, pady = 10)
+        button2 = ttk.Button(self, text ="Page 2",
+        command = lambda : controller.show_frame(Page2))
+        button2.grid(row = 2, column = 1, padx = 10, pady = 10)
+class Page1(tk.Frame):
+     
+    def __init__(self, parent, controller):
+         
+        tk.Frame.__init__(self, parent)
+        button2 = ttk.Button(self, text ="Startpage",
+                            command = lambda : controller.show_frame(LoginScreen))
+        button2.grid(row = 2, column = 1, padx = 10, pady = 10)
 
-# db.createEmployee(firstname,lastname,email,password,phonenumber,doornum,street,area,city,photo,role,grade,dateofbirth,incomefromemp,salary,remarks)
 
-def LoginScreen():
-    parent = Toplevel(master)
-    name = Label(parent,text = "Name").grid(row = 0, column = 0)  
-    e1 = Entry(parent).grid(row = 0, column = 1)  
-    password = Label(parent,text = "Password").grid(row = 1, column = 0)  
-    e2 = Entry(parent).grid(row = 1, column = 1)  
-    value1,value2 = e1.get(),e2.get()
-    button = Tk.Button(master=frame, text='press', command= lambda: loginCheck(1,1)).grid(row = 4, column = 0)  
-    
-def loginCheck(a,b):
-    print(a,b)
-
-LoginScreen();
-master.mainloop()
+class Page2(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        button2 = ttk.Button(self, text ="Startpage",
+                            command = lambda : controller.show_frame(LoginScreen))
+        button2.grid(row = 2, column = 1, padx = 10, pady = 10)
+class LoginScreen(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        lblUsername = ttk.Label(self,text = "Username").grid(row = 1, column = 0, padx = 10, pady = 10)
+        txtUsername = ttk.Entry(self, text ="Username")
+        txtUsername.grid(row = 1, column = 1, padx = 10, pady = 10)
+        lblUsername = ttk.Label(self,text = "Password").grid(row = 2, column = 0, padx = 10, pady = 10)
+        txtPassword = ttk.Entry(self, text ="Password")
+        txtPassword.grid(row = 2, column = 1, padx = 10, pady = 10)
+        
+        btnSubmit = ttk.Button(self, text ="Login",
+                            command = loginCheck(txtUsername.get(),txtPassword.get(),controller))
+        btnSubmit.grid(row = 3, column = 1, padx = 10, pady = 10)
+  
+def loginCheck(a,b,controller):
+    print(a)
+    print(b)
+    controller.show_frame(Page2)
+# Driver Code
+app = tkinterApp()
+app.title('Store Mangement')
+app.mainloop()
