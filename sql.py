@@ -2,9 +2,9 @@ import mysql.connector
 
 class Database:
     __host__ = 'localhost'
-    __username__ = 'JV'
-    __password__ = 'Jayavighnesh'
-    __database__ = 'storemanagement'
+    __username__ = 'root'
+    __password__ = ''
+    __database__ = 'pystoremanagement'
     
     def __init__(self):
         self.mydb = mysql.connector.connect(
@@ -13,26 +13,42 @@ class Database:
             password=self.__password__,
             database=self.__database__,
             )
-    def createEmployee(self,firstname,lastname,email,password,phonenumber,doornum,street,area,city,photo,role,grade,dateofbirth,incomefromemp,salary,remarks):
+    def checkLogin(self,email,password):
+        self.emp_email = email
+        self.emp_password = password
         self.mycursor = self.mydb.cursor()
-        self.firstname = firstname
-        self.lastname = lastname
-        self.email = email
-        self.password = password
-        self.phonenumber = phonenumber
-        self.doornum = doornum
-        self.street = street
-        self.area = area
-        self.city = city
-        self.photo = photo
-        self.role = role
-        self.grade = grade
-        self.dateofbirth = dateofbirth
-        self.incomefromemp = incomefromemp
-        self.salary = salary
-        self.remarks = remarks
-        sql = "INSERT INTO employee (emp_firstname,emp_lastname,emp_email,emp_password,emp_phonenumber,emp_doornum,emp_street,emp_area,emp_city,emp_photo,emp_role,emp_grade,emp_dateofbirth,emp_incomefromemp,emp_salary,emp_remarks) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        val = (self.firstname,self.lastname,self.email,self.password,self.phonenumber,self.doornum,self.street,self.area,self.city,self.photo,self.role,self.grade,self.dateofbirth,self.incomefromemp,self.salary,remarks)
+        sql = "SELECT * FROM employees WHERE email = %s"
+        adr = (self.emp_email,)
+        self.mycursor.execute(sql, adr)
+        myresult = self.mycursor.fetchall()
+        print(myresult[0][6])
+        if self.emp_password == myresult[0][6]:
+            return True,myresult[0]
+        else:
+            return False,0
+    def createEmployee(self,txtFirstName,txtLastName,txtAge,txtGender,txtEmail,txtPassword,txtPhoneNumber,txtDateOfBirth,txtDoorNum,txtStreet,txtArea,txtCity,txtState,file_path,txtRole,txtGrade,txtSalary,txtDateOfJoining,txtRemarks):
+        self.mycursor = self.mydb.cursor()
+        self.txtFirstName = txtFirstName
+        self.txtLastName = txtLastName
+        self.txtAge = txtAge
+        self.txtGender = txtGender
+        self.txtEmail = txtEmail
+        self.txtPassword = txtPassword
+        self.txtPhoneNumber = txtPhoneNumber
+        self.txtDateOfBirth = txtDateOfBirth
+        self.txtDoorNum = txtDoorNum
+        self.txtStreet = txtStreet
+        self.txtArea = txtArea
+        self.txtCity = txtCity
+        self.txtState = txtState
+        self.file_path = file_path
+        self.txtRole = txtRole
+        self.txtGrade = int(txtGrade)
+        self.txtSalary = int(txtSalary)
+        self.txtDateOfJoining = txtDateOfJoining
+        self.txtRemarks = txtRemarks
+        sql = "INSERT INTO employees (firstname,lastname,age,gender,email,password,phonenumber,dateofbirth,doornum,street,area,city,state,photourl,role,grade,salary,dateofjoining,remarks) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        val = (self.txtFirstName,self.txtLastName,self.txtAge,self.txtGender,self.txtEmail,self.txtPassword,self.txtPhoneNumber,self.txtDateOfBirth,self.txtDoorNum,self.txtStreet,self.txtArea,self.txtCity,self.txtState,self.file_path,self.txtRole,self.txtGrade,self.txtSalary,self.txtDateOfJoining,self.txtRemarks)
         self.mycursor.execute(sql, val)
 
         self.mydb.commit()

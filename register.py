@@ -1,59 +1,16 @@
 from tkinter import *
 from PIL import Image,ImageTk ##pip install pillow
-class ImageBrowser:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("Image Browser")
-
-        # List to store image paths
-        self.image_paths = []
-
-        # Create a listbox to display image names
-        self.listbox = tk.Listbox(self.root)
-        self.listbox.pack(fill=tk.BOTH, expand=True)
-        self.listbox.bind("<<ListboxSelect>>", self.show_image)
-
-        # Create a canvas to display images
-        self.canvas = tk.Canvas(self.root)
-        self.canvas.pack(fill=tk.BOTH, expand=True)
-
-        # Load images from a directory
-        self.load_images("path/to/directory")  # Replace with your image directory path
-
-    def load_images(self, directory):
-        # Clear the listbox and canvas
-        self.listbox.delete(0, tk.END)
-        self.canvas.delete("all")
-
-        # Get all image file paths in the directory
-        for filename in os.listdir(directory):
-            if filename.lower().endswith((".jpg", ".jpeg", ".png", ".gif")):
-                self.image_paths.append(os.path.join(directory, filename))
-                self.listbox.insert(tk.END, filename)
-
-    def show_image(self, event):
-        # Get the selected image index from the listbox
-        selection = self.listbox.curselection()
-        if selection:
-            index = int(selection[0])
-
-            # Load the selected image
-            image_path = self.image_paths[index]
-            image = Image.open(image_path)
-            image = image.resize((500, 500))  # Adjust the size as needed
-            photo = ImageTk.PhotoImage(image)
-
-            # Clear the canvas and display the image
-            self.canvas.delete("all")
-            self.canvas.create_image(0, 0, image=photo, anchor=tk.NW)
-            self.canvas.image = photo
+from tkinter import filedialog
+from tkinter import ttk
+import shutil
+from sql import Database
 class Register:
     def __init__(self,root):
         self.root = root
-        self.root.title('Add a new Employee')
+        self.root.title('Create a new profile')
         self.root.wm_iconbitmap('images/icons.ico')
         self.root.geometry("1250x675+0+0")
-        self.root.maxsize(1250, 675)
+        self.root.maxsize(1250,675)
         self.root.minsize(1250,675)
         self.bg = ImageTk.PhotoImage(file='138728.jpg')
         bg = Label(self.root,image=self.bg).place(x=250,y=0,relwidth=1,relheight=1)
@@ -63,44 +20,142 @@ class Register:
 
         frame1=Frame(self.root,bg='white')
         frame1.place(x=480,y = 100,width=700,height=500)
+        # frame1.photofilename = filedialog.askopenfilename(initialdir='',title="Select a Photo",filetypes=(("JPG Files","*.png"),('all files','*.*')))
+        # photonamepath = frame1.photofilename
+        # print(photonamepath)
+       
+        # self.imgPhoto = ImageTk.PhotoImage(Image.open(photonamepath))
+        # lblimgPhoto = Label(frame1,image=self.imgPhoto).place(x=400,y=0,width=200,height=0)
+        title = Label(frame1,text='Create new Profile',font=("Verdana",20,"bold"),bg="white",fg='#0373fc').place(x=50,y=30)
+        lblFirstName = Label(frame1,text='First Name :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=80)
+        lblLastName = Label(frame1,text='Last Name :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=110)
+        lblAge = Label(frame1,text='Age :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=140)
+        lblGender = Label(frame1,text='Gender :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=170)
+        lblEmail = Label(frame1,text='Email :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=200)
+        lblPassword = Label(frame1,text='Password :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=230)
+        lblPhoneNumber = Label(frame1,text='Phone Number :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=260)
+        lblDateOfBirth = Label(frame1,text='Date of Birth :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=290)
+        lblDoorNum = Label(frame1,text='Door No :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=320)
+        lblStreet = Label(frame1,text='Street :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=350)
+        lblArea = Label(frame1,text='Area :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=380)
+        lblCity = Label(frame1,text='City :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=410)
+        lblState = Label(frame1,text='State :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=440)
+        lblSelectPhoto = Label(frame1,text='Select Photo :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=380,y=290)
+        btnChoosePhoto = Button(frame1,text='Choose Photo',width=20,font=("Verdana",10,"bold"),command=self.pick_image,fg='white',bg='#0373fc').place(x=500,y=290)
+        lblRole = Label(frame1,text='Role :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=380,y=320)
+        lblGrade = Label(frame1,text='Grade :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=380,y=350)
+        lblSalary = Label(frame1,text='Salary :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=380,y=380)
+        lblDateOfJoining = Label(frame1,text='Date of Joining :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=380,y=410)
+        lblRemarks = Label(frame1,text='Remarks :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=380,y=440)
+        btnClear = Button(frame1,text='Clear',border=0,font=("Verdana",10,"bold"),height=1,width=25, bg='#0373fc',fg='white',command=self.clear).place(x=130,y=470)
+        btnCreate = Button(frame1,text='Create',border=0,font=("Verdana",10,"bold"),width=25, bg='#0373fc',fg='white',command=self.createEmployee).place(x=380,y=470)
+        # image=Image.open('images/create.png')
+        # img=image.resize((450, 350))
+        # my_img=ImageTk.PhotoImage(img)
+        # self.roundedbutton = Button(frame1, image=my_img,height=20,width=250).place(x=380,y=470)
+        self.txtFirstName = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
+        self.txtLastName = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
+        self.txtAge = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
+        n = StringVar()
+        self.txtGender = ttk.Combobox(frame1, width = 27, textvariable = n)
+        self.txtGender['values'] = (' Male', 
+                          ' Female')
 
-        title = Label(frame1,text='Add New Employee',font=("Verdana",20,"bold"),bg="white",fg='green').place(x=50,y=30)
-        lblFirstName = Label(frame1,text='First Name :',font=("Verdana",10,"bold"),bg="white",fg='green').place(x=50,y=80)
-        lblLastName = Label(frame1,text='Last Name :',font=("Verdana",10,"bold"),bg="white",fg='green').place(x=50,y=110)
-        lblEmail = Label(frame1,text='Email :',font=("Verdana",10,"bold"),bg="white",fg='green').place(x=50,y=140)
-        lblPassword = Label(frame1,text='Password :',font=("Verdana",10,"bold"),bg="white",fg='green').place(x=50,y=170)
-        lblPhoneNumber = Label(frame1,text='Phone Number :',font=("Verdana",10,"bold"),bg="white",fg='green').place(x=50,y=200)
-        lblDateOfBirth = Label(frame1,text='Date of Birth :',font=("Verdana",10,"bold"),bg="white",fg='green').place(x=50,y=230)
-        lblDoorNum = Label(frame1,text='Door No :',font=("Verdana",10,"bold"),bg="white",fg='green').place(x=50,y=260)
-        lblStreet = Label(frame1,text='Street :',font=("Verdana",10,"bold"),bg="white",fg='green').place(x=50,y=290)
-        lblArea = Label(frame1,text='Area :',font=("Verdana",10,"bold"),bg="white",fg='green').place(x=50,y=320)
-        lblCity = Label(frame1,text='City :',font=("Verdana",10,"bold"),bg="white",fg='green').place(x=50,y=350)
-        lblState = Label(frame1,text='State :',font=("Verdana",10,"bold"),bg="white",fg='green').place(x=50,y=380)
-        txtFirstName = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
-        txtLastName = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
-        txtEmail = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
-        txtPassword = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
-        txtPhoneNumber = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
-        txtDateOfBirth = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
-        txtDoorNum = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
-        txtStreet = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
-        txtArea = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
-        txtCity = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
-        txtState = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
-        txtFirstName.place(x=170,y=80) 
-        txtLastName.place(x=170,y=110)
-        txtEmail.place(x=170,y=140)
-        txtPassword.place(x=170,y=170)
-        txtPhoneNumber.place(x=170,y=200)
-        txtDateOfBirth.place(x=170,y=230)
-        txtDoorNum.place(x=170,y=260)
-        txtStreet.place(x=170,y=290)
-        txtArea.place(x=170,y=320)
-        txtCity.place(x=170,y=350)
-        txtState.place(x=170,y=380)
+        self.txtEmail = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
+        self.txtPassword = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
+        self.txtPhoneNumber = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
+        self.txtDateOfBirth = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
+        self.txtDoorNum = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
+        self.txtStreet = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
+        self.txtArea = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
+        self.txtCity = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
+        self.txtState = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
+        self.txtRole = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
+        self.txtGrade = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
+        self.txtSalary = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
+        self.txtDateOfJoining = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
+        self.txtRemarks = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
+        self.txtFirstName.place(x=170,y=80) 
+        self.txtLastName.place(x=170,y=110)
+        self.txtAge.place(x=170,y=140)
+        self.txtGender.place(x=170,y=170)
+        self.txtEmail.place(x=170,y=200)
+        self.txtPassword.place(x=170,y=230)
+        self.txtPhoneNumber.place(x=170,y=260)
+        self.txtDateOfBirth.place(x=170,y=290)
+        self.txtDoorNum.place(x=170,y=320)
+        self.txtStreet.place(x=170,y=350)
+        self.txtArea.place(x=170,y=380)
+        self.txtCity.place(x=170,y=410)
+        self.txtState.place(x=170,y=440)
+        self.txtRole.place(x=500,y=320)
+        self.txtGrade.place(x=500,y=350)
+        self.txtSalary.place(x=500,y=380)
+        self.txtDateOfJoining.place(x=500,y=410)
+        self.txtRemarks.place(x=500,y=440)
+        self.image_label = Label(frame1)
+        self.image_label.place(x=440,y=70,width=150,height=200)
+    def pick_image(self):
+        self.file_path = filedialog.askopenfilename(initialdir='',title="Select a Photo",filetypes=(("JPG Files","*.jpg"),("PNG Files","*.png"),('All Files','*.*')))
+        image = Image.open(self.file_path)
+        image.thumbnail((400, 200))
+        photo = ImageTk.PhotoImage(image)
+        self.image_label.config(image=photo)
+        self.image_label.image = photo
+    def clear(self):
+        
+        image = Image.open('images/nopictureselected.png')
+        image.thumbnail((400, 200))
+        photo = ImageTk.PhotoImage(image)
+        self.image_label.config(image=photo)
+        self.image_label.image = photo
+        self.txtFirstName.delete(0,END)
+        self.txtLastName.delete(0,END)
+        self.txtAge.delete(0,END)
+        self.txtGender.delete(0,END)
+        self.txtEmail.delete(0,END)
+        self.txtPassword.delete(0,END)
+        self.txtPhoneNumber.delete(0,END)
+        self.txtDateOfBirth.delete(0,END)
+        self.txtDoorNum.delete(0,END)
+        self.txtStreet.delete(0,END)
+        self.txtArea.delete(0,END)
+        self.txtCity.delete(0,END)
+        self.txtState.delete(0,END)
+        self.txtRole.delete(0,END)
+        self.txtGrade.delete(0,END)
+        self.txtSalary.delete(0,END)
+        self.txtDateOfJoining.delete(0,END)
+        self.txtRemarks.delete(0,END)
+        # self.root.destroy()
+        # import register
+    def createEmployee(self):
+        src_path = self.file_path
+        dst_path = r"D:/StoreManagement/pystoremanagement/employeeImages/" + self.txtPhoneNumber.get() + ".png"
+        shutil.copy(src_path, dst_path)
+        print('Copied')
+        print(self.file_path)
+        print(self.txtFirstName.get())
+        print(self.txtLastName.get())
+        print(self.txtAge.get())
+        print(self.txtGender.get())
+        print(self.txtEmail.get())
+        print(self.txtPassword.get())
+        print(self.txtPhoneNumber.get())
+        print(self.txtDateOfBirth.get())
+        print(self.txtDoorNum.get())
+        print(self.txtStreet.get())
+        print(self.txtArea.get())
+        print(self.txtCity.get())
+        print(self.txtState.get())
+        print(self.txtRole.get())
+        print(self.txtGrade.get())
+        print(self.txtSalary.get())
+        print(self.txtDateOfJoining.get())
+        print(self.txtRemarks.get())
+        db = Database()
+        db.createEmployee(self.txtFirstName.get(),self.txtLastName.get(),self.txtAge.get(),self.txtGender.get(),self.txtEmail.get(),self.txtPassword.get(),self.txtPhoneNumber.get(),self.txtDateOfBirth.get(),self.txtDoorNum.get(),self.txtStreet.get(),self.txtArea.get(),self.txtCity.get(),self.txtState.get(),dst_path,self.txtRole.get(),self.txtGrade.get(),self.txtSalary.get(),self.txtDateOfJoining.get(),self.txtRemarks.get())
 
-
-    
 root=Tk()
 
 obj = Register(root)
