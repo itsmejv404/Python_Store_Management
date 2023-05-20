@@ -56,8 +56,8 @@ class Register:
         self.txtFirstName = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
         self.txtLastName = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
         self.txtAge = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
-        n = StringVar()
-        self.txtGender = ttk.Combobox(frame1, width = 27, textvariable = n)
+        genderStringVar = StringVar()
+        self.txtGender = ttk.Combobox(frame1, width = 27, textvariable = genderStringVar)
         self.txtGender['values'] = (' Male', 
                           ' Female')
 
@@ -70,8 +70,14 @@ class Register:
         self.txtArea = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
         self.txtCity = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
         self.txtState = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
-        self.txtRole = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
-        self.txtGrade = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
+        # self.txtRole = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
+        roleStringVar = StringVar()
+        self.txtRole = ttk.Combobox(frame1, width = 27, textvariable = roleStringVar)
+        roles = ('Store Proprietor','Store Manager','Store Assistant Manager','Financial Manager','Procurement Manager','Department Sales Man','Cashiers','Janitor')
+        self.txtRole['values'] = roles
+        self.txtRole.bind("<<ComboboxSelected>>", self.on_combobox_change)
+        self.gradeStringVar = StringVar()
+        self.txtGrade = Entry(frame1,textvariable=self.gradeStringVar,font=("Verdana",10,"bold"),bg="white",fg='black',state=DISABLED)
         self.txtSalary = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
         self.txtDateOfJoining = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
         self.txtRemarks = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black')
@@ -95,6 +101,12 @@ class Register:
         self.txtRemarks.place(x=500,y=440)
         self.image_label = Label(frame1)
         self.image_label.place(x=440,y=70,width=150,height=200)
+    def on_combobox_change(self,event):
+        print('Management Roles Modified')
+        selected_role = self.txtRole.get()
+        roles = ('Store Proprietor','Store Manager','Store Assistant Manager','Financial Manager','Procurement Manager','Department Sales Man','Cashiers','Janitor')
+        grades = (0,1,2,3,4,5,6,7)
+        self.gradeStringVar.set(roles.index(selected_role))
     def pick_image(self):
         self.file_path = filedialog.askopenfilename(initialdir='',title="Select a Photo",filetypes=(("JPG Files","*.jpg"),("PNG Files","*.png"),('All Files','*.*')))
         image = Image.open(self.file_path)
@@ -156,7 +168,10 @@ class Register:
         db = Database()
         db.createEmployee(self.txtFirstName.get(),self.txtLastName.get(),self.txtAge.get(),self.txtGender.get(),self.txtEmail.get(),self.txtPassword.get(),self.txtPhoneNumber.get(),self.txtDateOfBirth.get(),self.txtDoorNum.get(),self.txtStreet.get(),self.txtArea.get(),self.txtCity.get(),self.txtState.get(),dst_path,self.txtRole.get(),self.txtGrade.get(),self.txtSalary.get(),self.txtDateOfJoining.get(),self.txtRemarks.get())
 
-root=Tk()
 
-obj = Register(root)
-root.mainloop()
+def startWindow():
+    print('Hi')
+    root=Tk()
+    obj = Register(root)
+    root.mainloop()
+startWindow()

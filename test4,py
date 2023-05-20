@@ -1,0 +1,51 @@
+import tkinter as tk
+
+class MainWindow(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.open_button_third = tk.Button(self, text="Open Third Window", command=self.open_third_window)
+        self.open_button = tk.Button(self, text="Open Second Window", command=self.open_second_window)
+        self.open_button.pack()
+        self.open_button_third.pack()
+        
+    def open_second_window(self):
+        self.withdraw()
+        self.second_window = SecondWindow(self)
+        self.second_window.protocol("WM_DELETE_WINDOW", self.close_second_window)
+
+    def close_second_window(self):
+        self.second_window.destroy()
+        self.deiconify()
+    def open_third_window(self):
+        self.withdraw()
+        self.third_window = ThirdWindow(self)
+        self.third_window.protocol("WM_DELETE_WINDOW", self.close_third_window)
+
+    def close_third_window(self):
+        self.third_window.destroy()
+        self.deiconify()
+
+class SecondWindow(tk.Toplevel):
+    def __init__(self, root):
+        super().__init__(root)
+        self.close_button = tk.Button(self, text="Close Second Window", command=self.close_window)
+        self.close_button.pack()
+
+    def close_window(self):
+        self.destroy()
+        self.master.deiconify()
+class ThirdWindow(tk.Toplevel):
+    def __init__(self, root):
+        super().__init__(root)
+        self.close_buttonthird = tk.Button(self, text="Close Third Window", command=self.close_window)
+        self.close_buttonthird.pack()
+
+    def close_window(self):
+        self.destroy()
+        self.master.deiconify()
+
+# Create the main window
+root = MainWindow()
+
+# Start the main event loop
+root.mainloop()
