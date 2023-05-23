@@ -61,7 +61,7 @@ class Database:
         self.mydb.commit()
 
         print(self.mycursor.rowcount, "record inserted.")
-    def updateEmployee(self,txtFirstName,txtLastName,txtAge,txtGender,txtEmail,txtPassword,txtPhoneNumber,txtDateOfBirth,txtDoorNum,txtStreet,txtArea,txtCity,txtState,file_path,txtRole,txtGrade,txtSalary,txtDateOfJoining,txtRemarks):
+    def updateEmployee(self,txtFirstName,txtLastName,txtAge,txtGender,txtEmail,txtPassword,txtPhoneNumber,txtDateOfBirth,txtDoorNum,txtStreet,txtArea,txtCity,txtState,txtRole,txtGrade,txtSalary,txtDateOfJoining,txtRemarks,id,photo = ''):
         self.mycursor = self.mydb.cursor()
         self.txtFirstName = txtFirstName
         self.txtLastName = txtLastName
@@ -76,19 +76,25 @@ class Database:
         self.txtArea = txtArea
         self.txtCity = txtCity
         self.txtState = txtState
-        self.file_path = file_path
+        # self.file_path = file_path
         self.txtRole = txtRole
         self.txtGrade = int(txtGrade)
         self.txtSalary = int(txtSalary)
         self.txtDateOfJoining = txtDateOfJoining
         self.txtRemarks = txtRemarks
-        sql = "INSERT INTO employees (firstname,lastname,age,gender,email,password,phonenumber,dateofbirth,doornum,street,area,city,state,photourl,role,grade,salary,dateofjoining,remarks) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        val = (self.txtFirstName,self.txtLastName,self.txtAge,self.txtGender,self.txtEmail,self.txtPassword,self.txtPhoneNumber,self.txtDateOfBirth,self.txtDoorNum,self.txtStreet,self.txtArea,self.txtCity,self.txtState,self.file_path,self.txtRole,self.txtGrade,self.txtSalary,self.txtDateOfJoining,self.txtRemarks)
-        self.mycursor.execute(sql, val)
+        # sql = "UPDATE employees firstname = %s,lastname = %s,age = %s,gender = %s,email = %s,password = %s,phonenumber = %s,dateofbirth = %s,doornum = %s,street = %s,area, = %scity = %s,state = %s,role = %s,grade = %s,salary = %s,dateofjoining = %s,remarks = %s WHERE id = %s;"
+        # val = (self.txtFirstName,self.txtLastName,self.txtAge,self.txtGender,self.txtEmail,self.txtPassword,self.txtPhoneNumber,self.txtDateOfBirth,self.txtDoorNum,self.txtStreet,self.txtArea,self.txtCity,self.txtState,self.txtRole,self.txtGrade,self.txtSalary,self.txtDateOfJoining,self.txtRemarks,id)
+        # sql = "UPDATE employees firstname = 'Check' WHERE id = "+ str(id) + ";"
+        # val = (self.txtFirstName,id)
+        # self.mycursor.execute(sql, val)
+        # self.mycursor.execute(sql)
+
+        # update_query = "UPDATE employees SET firstname = %s,lastname = %s,age = %s,gender = %s,email = %s,password = %s,phonenumber = %s,doornum = %s,street = %s,area = %s,state = %s,role = %s,grade = %s,salary = %s,dateofjoining = %s,remarks = %s WHERE id = %s;"
+        # self.mycursor.execute(update_query, (self.txtFirstName,self.txtLastName,self.txtAge,self.txtGender,self.txtEmail,self.txtPassword,self.txtPhoneNumber,self.txtDoorNum,self.txtStreet,self.txtArea,self.txtState,self.txtRole,self.txtGrade,self.txtSalary,self.txtDateOfJoining,self.txtRemarks,id))
+        update_query = "UPDATE employees SET firstname = %s,lastname = %s,age = %s,gender = %s,email = %s,password = %s,phonenumber = %s,doornum = %s,street = %s,area = %s,state = %s,role = %s,grade = %s,salary = %s,dateofjoining = %s,remarks = %s,photourl = %s WHERE id = %s;"
+        self.mycursor.execute(update_query, (self.txtFirstName,self.txtLastName,self.txtAge,self.txtGender,self.txtEmail,self.txtPassword,self.txtPhoneNumber,self.txtDoorNum,self.txtStreet,self.txtArea,self.txtState,self.txtRole,self.txtGrade,self.txtSalary,self.txtDateOfJoining,self.txtRemarks,photo,id))
 
         self.mydb.commit()
-
-        print(self.mycursor.rowcount, "record inserted.")
     def deleteEmployee(self,deleteID):
         print(deleteID)
         self.mycursor = self.mydb.cursor()
