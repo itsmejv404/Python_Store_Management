@@ -133,10 +133,6 @@ class AddNewProfile(tk.Toplevel):
         self.maxsize(1280,720)
         self.minsize(1280,720)
         self.file_path = ''
-        self.btnClear
-        self.btnCreate
-        self.btnUpdate
-        self.btnDelete
                 # self.bg = ImageTk.PhotoImage(file='138728.jpg')
         # bg = Label(self,image=self.bg).place(x=250,y=0,relwidth=1,relheight=1)
         
@@ -177,9 +173,9 @@ class AddNewProfile(tk.Toplevel):
         lblDateOfJoining = Label(frame1,text='Date of Joining :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=700,y=260)
         lblRemarks = Label(frame1,text='Remarks :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=700,y=290)
         self.btnClear = Button(frame1,text='Clear',border=0,font=("Verdana",10,"bold"),height=1,width=25, bg='#0373fc',fg='white',command=self.clear,state=NORMAL).place(x=130,y=350)
-        self.btnCreate = Button(frame1,text='Create',border=0,font=("Verdana",10,"bold"),width=25, bg='#0373fc',fg='white',command=self.createEmployee).place(x=380,y=350)
-        self.btnUpdate = Button(frame1,text='Update',border=0,font=("Verdana",10,"bold"),width=25, bg='#0373fc',fg='white',command=self.updateEmployee).place(x=630,y=350)
-        self.btnDelete = Button(frame1,text='Delete',border=0,font=("Verdana",10,"bold"),width=25, bg='#0373fc',fg='white',command=self.deleteEmployee).place(x=880,y=350)
+        self.btnCreate = Button(frame1,text='Create',border=0,font=("Verdana",10,"bold"),width=25, bg='#0373fc',fg='white',state=NORMAL,command=self.createEmployee).place(x=380,y=350)
+        self.btnUpdate = Button(frame1,text='Update',border=0,font=("Verdana",10,"bold"),width=25, bg='#0373fc',fg='white',state=NORMAL,command=self.updateEmployee).place(x=630,y=350)
+        self.btnDelete = Button(frame1,text='Delete',border=0,font=("Verdana",10,"bold"),width=25, bg='#0373fc',fg='white',state=NORMAL,command=self.deleteEmployee).place(x=880,y=350)
         # image=Image.open('images/create.png')
         # img=image.resize((450, 350))
         # my_img=ImageTk.PhotoImage(img)
@@ -345,6 +341,8 @@ class AddNewProfile(tk.Toplevel):
         self.txtSalary.delete(0,END)
         self.txtDateOfJoining.delete(0,END)
         self.txtRemarks.delete(0,END)
+        self.btnUpdate['state'] = NORMAL
+
         # self.root.destroy()
         # import register
     def createEmployee(self):
