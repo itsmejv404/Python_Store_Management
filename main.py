@@ -78,12 +78,14 @@ class Dashboard(tk.Toplevel,):
             name = user_data[1]+user_data[2]
             storeProprietorFrame=Frame(self,bg='#dcedff')
             storeProprietorFrame.place(x=450,y = 0,width=800,height=675)
-            createNewProfile = Button(storeProprietorFrame,text='Add / Manage Employee',command=self.openAddNewProfileWindow).place(x = 0,y = 0)
+            createNewProfile = Button(storeProprietorFrame,text='Add / Manage Employee',command=self.openAddNewProfileWindow).place(x = 50,y = 150,width=700)
+            manageInventory = Button(storeProprietorFrame,text='Inventory Management',command=self.openAddNewProfileWindow).place(x = 50,y = 150,width=700)
+            
         elif(user_data[16] == 1):
             ## Store Manager
             storeManagerFrame=Frame(self,bg='#dcedff')
             storeManagerFrame.place(x=450,y = 0,width=800,height=675)
-            createNewProfile = Button(storeManagerFrame,text='Create new employee profile').place(x = 0,y = 0)
+            createNewProfile = Button(storeProprietorFrame,text='Add / Manage Employee',command=self.openAddNewProfileWindow).place(x = 50,y = 150,width=700)
         elif(user_data[16] == 2):
             ## Store Assistant Store Manager
             storeAssistantStoreManagerFrame=Frame(self,bg='#dcedff')
@@ -465,10 +467,188 @@ class AddNewProfile(tk.Toplevel):
     def close_window(self):
         self.destroy()
         self.master.deiconify()
+class AddNewItem(tk.Toplevel):
+    def __init__(self, root):
+        super().__init__(root)
+        self.title('Create a new Item')
+        self.wm_iconbitmap('images/icons.ico')
+        self.geometry("1280x720+0+0")
+        self.maxsize(1280,720)
+        self.minsize(1280,720)
+        self.file_path = ''
+        frame1=Frame(self,bg='white')
+        frame1.place(x=0,y = 0,width=1280,height=720)
+        title = Label(frame1,text='Create new Item',font=("Verdana",20,"bold"),bg="white",fg='#0373fc').place(x=50,y=30)
+        lblItemName = Label(frame1,text='First Name :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=80)
+        lblItemQuantity = Label(frame1,text='Last Name :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=110)
+        lblCostPerItem = Label(frame1,text='Age :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=140)
+        lblProfitPerItem = Label(frame1,text='Gender :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=170)
+        lblTotalItemCost = Label(frame1,text='Email :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=200)
+        lblTotalItemProfit = Label(frame1,text='Password :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=230)
+        lblItemCategory = Label(frame1,text='Phone Number :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=260)
+        self.btnClear = Button(frame1,text='Clear',border=0,font=("Verdana",10,"bold"),height=1,width=25, bg='#0373fc',fg='white',command=self.clear,state=NORMAL).place(x=130,y=350)
+        self.btnCreate = Button(frame1,text='Create',border=0,font=("Verdana",10,"bold"),width=25, bg='#0373fc',fg='white',state=NORMAL,command=self.createItem).place(x=380,y=350)
+        self.btnUpdate = Button(frame1,text='Update',border=0,font=("Verdana",10,"bold"),width=25, bg='#0373fc',fg='white',state=NORMAL,command=self.updateEmployee).place(x=630,y=350)
+        self.btnDelete = Button(frame1,text='Delete',border=0,font=("Verdana",10,"bold"),width=25, bg='#0373fc',fg='white',state=NORMAL,command=self.deleteEmployee).place(x=880,y=350)
+        self.itemNameStringVar = StringVar()
+        self.itemQuantityStringVar = StringVar()
+        self.costPerItemStringVar = StringVar()
+        self.profitPerItemStringVar = StringVar()
+        self.totalItemCostStringVar = StringVar()
+        self.totalItemProfitStringVar = StringVar()
+        self.itemCategoryStringVar = StringVar()
+        self.txtItemName = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black',textvariable=self.itemNameStringVar)
+        self.txtItemQuantity = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black',textvariable=self.itemQuantityStringVar)
+        self.txtCostPerItem = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black',textvariable=self.costPerItemStringVar)
+        self.txtItemCategory = ttk.Combobox(frame1, width = 27, textvariable = self.itemCategoryStringVar)
+        categories = ("Fresh Produce","Meat and Poultry","Seafood","Dairy Products","Bakery","Deli","Frozen Foods","Pantry Staples","Snacks","Beverages","Baby Care","Personal Care","Household Cleaning","Pet Supplies","Health and Wellness")
+
+        self.txtItemCategory['values'] = categories
+        self.txtProfitPerItem = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black',textvariable=self.profitPerItemStringVar)
+        self.txtTotalItemCost = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black',textvariable=self.totalItemCostStringVar)
+        self.txtTotalItemProfit = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black',textvariable=self.totalItemProfitStringVar)
+
+        columns = ('ID','Category Name','Item Name','Item Quantity','Total Item Price','Total Item Profit')
+        self.records_treeview = ttk.Treeview(frame1, columns=columns, show="headings")
+        for col in columns:
+            self.records_treeview.heading(col, text=col,anchor=W)
+        self.records_treeview.pack()
+
+        lstDB = Database()
+        self.result = lstDB.retriveItemData()
+        for i in range(len(self.result)):
+            self.records_treeview.insert("", "end", values=(self.result[i][0],self.result[i][1] + self.result[i][2],self.result[i][4],self.result[i][8],self.result[i][15],self.result[i][17]))
+        self.records_treeview.bind("<<TreeviewSelect>>", self.on_select)
+        self.records_treeview.place(x=50,y=400,width=1200,height=300)
+        self.txtItemName.place(x=170,y=80) 
+        self.txtItemQuantity.place(x=170,y=110)
+        self.txtCostPerItem.place(x=170,y=140)
+        self.txtProfitPerItem.place(x=170,y=170)
+        self.txtTotalItemCost.place(x=170,y=200)
+        self.txtTotalItemProfit.place(x=170,y=230)
+        self.txtItemCategory.place(x=170,y=260)
+    def on_select(self,event):
+            
+            selected_item = self.records_treeview.selection()
+            if selected_item:
+                values = self.records_treeview.item(selected_item)['values']
+                print('Menu Selected')
+                print(values)
+                self.selectedDataset = ''
+                for i in self.result:
+                    if values[0] == i[0]:
+                        self.selectedDataset = i
+                        
+                        print('Yep')
+                    # else:
+                        # print('Sup')
+                self.firstNameStringVar.set(self.selectedDataset[1])
+                self.lastNameStringVar.set(self.selectedDataset[2])
+                self.ageStringVar.set(self.selectedDataset[3])
+                self.genderStringVar.set(self.selectedDataset[4])
+                self.emailStringVar.set(self.selectedDataset[5])
+                self.passwordStringVar.set(self.selectedDataset[6])
+                self.phoneNumberStringVar.set(self.selectedDataset[7])
+                self.dateOfBirthStringVar.set(self.selectedDataset[8])
+                self.doorNumStringVar.set(self.selectedDataset[9])
+                self.streetStringVar.set(self.selectedDataset[10])
+                self.areaStringVar.set(self.selectedDataset[11])
+                self.cityStringVar.set(self.selectedDataset[12])
+                self.stateStringVar.set(self.selectedDataset[13])
+                image = Image.open(self.selectedDataset[14])
+                image.thumbnail((400, 200))
+                photo = ImageTk.PhotoImage(image)
+                self.image_label.config(image=photo)
+                self.image_label.image = photo
+                # self.photoStringVar.set(self.selectedDataset[1])
+                self.roleStringVar.set(self.selectedDataset[15])
+                self.gradeStringVar.set(self.selectedDataset[16])
+                self.salaryStringVar.set(self.selectedDataset[17])
+                self.dateOfJoiningStringVar.set(self.selectedDataset[18])
+                self.remarksStringVar.set(self.selectedDataset[19])
+    def on_combobox_change(self,event):
+        print('Management Roles Modified')
+        selected_role = self.txtRole.get()
+        roles = ('Store Proprietor','Store Manager','Store Assistant Manager','Financial Manager','Procurement Manager','Department Sales Man','Cashiers','Janitor')
+        grades = (0,1,2,3,4,5,6,7)
+        self.gradeStringVar.set(roles.index(selected_role))
+    def pick_image(self):
+        self.file_path = filedialog.askopenfilename(initialdir='',title="Select a Photo",filetypes=(("PNG Files","*.png"),("JPG Files","*.jpg"),('All Files','*.*')))
+        image = Image.open(self.file_path)
+        image.thumbnail((400, 200))
+        photo = ImageTk.PhotoImage(image)
+        self.image_label.config(image=photo)
+        self.image_label.image = photo
+    def clear(self):
+        
+        image = Image.open('images/nopictureselected.png')
+        image.thumbnail((400, 200))
+        photo = ImageTk.PhotoImage(image)
+        self.image_label.config(image=photo)
+        self.image_label.image = photo
+        self.txtFirstName.delete(0,END)
+        self.txtLastName.delete(0,END)
+        self.txtAge.delete(0,END)
+        self.txtGender.delete(0,END)
+        self.txtEmail.delete(0,END)
+        self.txtPassword.delete(0,END)
+        self.txtPhoneNumber.delete(0,END)
+        self.txtDateOfBirth.delete(0,END)
+        self.txtDoorNum.delete(0,END)
+        self.txtStreet.delete(0,END)
+        self.txtArea.delete(0,END)
+        self.txtCity.delete(0,END)
+        self.txtState.delete(0,END)
+        self.txtRole.delete(0,END)
+        self.txtGrade.delete(0,END)
+        self.txtSalary.delete(0,END)
+        self.txtDateOfJoining.delete(0,END)
+        self.txtRemarks.delete(0,END)
+        self.btnUpdate['state'] = NORMAL
+
+        # self.root.destroy()
+        # import register
+    def createItem(self):
+        db = Database()
+        db.createEmployee(self.txtFirstName.get(),self.txtLastName.get(),self.txtAge.get(),self.txtGender.get(),self.txtEmail.get(),self.txtPassword.get(),self.txtPhoneNumber.get(),self.txtDateOfBirth.get(),self.txtDoorNum.get(),self.txtStreet.get(),self.txtArea.get(),self.txtCity.get(),self.txtState.get(),dst_path,self.txtRole.get(),self.txtGrade.get(),self.txtSalary.get(),self.txtDateOfJoining.get(),self.txtRemarks.get())
+        image = Image.open('images/nopictureselected.png')
+        image.thumbnail((400, 200))
+        photo = ImageTk.PhotoImage(image)
+        self.image_label.config(image=photo)
+        self.image_label.image = photo
+        self.txtFirstName.delete(0,END)
+        self.txtLastName.delete(0,END)
+        self.txtAge.delete(0,END)
+        self.txtGender.delete(0,END)
+        self.txtEmail.delete(0,END)
+        self.txtPassword.delete(0,END)
+        self.txtPhoneNumber.delete(0,END)
+        self.txtDateOfBirth.delete(0,END)
+        self.txtDoorNum.delete(0,END)
+        self.txtStreet.delete(0,END)
+        self.txtArea.delete(0,END)
+        self.txtCity.delete(0,END)
+        self.txtState.delete(0,END)
+        self.txtRole.delete(0,END)
+        self.txtGrade.delete(0,END)
+        self.txtSalary.delete(0,END)
+        self.txtDateOfJoining.delete(0,END)
+        self.txtRemarks.delete(0,END)
+        self.close_window()
+    def updateItem(self):
+        db = Database()
+        db.updateItem(self.txtFirstName.get(),self.txtLastName.get(),self.txtAge.get(),self.txtGender.get(),self.txtEmail.get(),self.txtPassword.get(),self.txtPhoneNumber.get(),self.txtDateOfBirth.get(),self.txtDoorNum.get(),self.txtStreet.get(),self.txtArea.get(),self.txtCity.get(),self.txtState.get(),self.txtRole.get(),self.txtGrade.get(),self.txtSalary.get(),self.txtDateOfJoining.get(),self.txtRemarks.get(),self.selectedDataset[0],dst_path)
+        self.close_window()
+    def deleteItem(self):
+        id = self.selectedDataset[0]
+        db = Database()
+        print(id)
+        db.deleteItem(id)
+        self.close_window()
+    def close_window(self):
+        self.destroy()
+        self.master.deiconify()
 
 # Create the main window
 root = LoginScreen()
-# temp_data = (6, 'Franlin', 'Clinton', '22', ' Male', 'franklin@gmail.com', 'Trevor', '1234567890', '01/01/2001', 'Door', 'Street', 'Area', 'Salem', 'Tamil nadu', 'D:/StoreManagement/pystoremanagement/employeeImages/1234567890.png', 'Store Proprietor', 0, 123456, '01/01/2005', 'Waste of Time')
-# root = Dashboard(self,temp_data)
-# Start the main event loop
 root.mainloop()

@@ -106,3 +106,51 @@ class Database:
         self.mydb.commit()
 
         print(self.mycursor.rowcount, "record inserted.")
+
+    def retriveItemData(self):
+        self.mycursor = self.mydb.cursor()
+        sql = "SELECT * FROM inventory"
+        self.mycursor.execute(sql)
+        myresult = self.mycursor.fetchall()
+        print(myresult[0])
+        return myresult
+    def createItem(self,txtItemName,txtItemQuantity,txtPerItemPrice,txtPerItemProfit,txtTotalItemPrice,txtTotalItemProfit,txtItemCategory):
+        self.mycursor = self.mydb.cursor()
+        self.txtItemName = txtItemName
+        self.txtItemQuantity = int(txtItemQuantity)
+        self.txtPerItemPrice = int(txtPerItemPrice)
+        self.txtPerItemProfit = int(txtPerItemProfit)
+        self.txtTotalItemPrice = int(txtTotalItemPrice)
+        self.txtTotalItemProfit = int(txtTotalItemProfit)
+        self.txtItemCategory = txtItemCategory
+        sql = "INSERT INTO inventory (category_name,item_name,item_quantity,per_item_price,per_item_profit,total_item_price,total_item_profit) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+        val = (self.txtItemCategory,self.txtItemName,self.txtItemQuantity,self.txtPerItemPrice,self.txtPerItemProfit,self.txtTotalItemPrice,self.txtTotalItemProfit)
+        self.mycursor.execute(sql, val)
+
+        self.mydb.commit()
+
+        print(self.mycursor.rowcount, "Items inserted.")
+    def updateItem(self,txtItemName,txtItemQuantity,txtPerItemPrice,txtPerItemProfit,txtTotalItemPrice,txtTotalItemProfit,txtItemCategory,id):
+        self.mycursor = self.mydb.cursor()
+        self.txtItemName = txtItemName
+        self.txtItemQuantity = int(txtItemQuantity)
+        self.txtPerItemPrice = int(txtPerItemPrice)
+        self.txtPerItemProfit = int(txtPerItemProfit)
+        self.txtTotalItemPrice = int(txtTotalItemPrice)
+        self.txtTotalItemProfit = int(txtTotalItemProfit)
+        self.txtItemCategory = txtItemCategory
+        update_query = "UPDATE inventory SET category_name = %s,item_name = %s,item_quantity = %s,per_item_price = %s,per_item_profit = %s,total_item_price = %s,total_item_profit = %s WHERE id = %s;"
+        self.mycursor.execute(update_query, (self.txtItemCategory,self.txtItemName,self.txtItemQuantity,self.txtPerItemPrice,self.txtPerItemProfit,self.txtTotalItemPrice,self.txtTotalItemProfit,id))
+
+        self.mydb.commit()
+    def deleteItem(self,deleteID):
+        print(deleteID)
+        self.mycursor = self.mydb.cursor()
+        sql = "DELETE FROM inventory WHERE id = " + str(deleteID)
+        # val = (8,)
+        
+        self.mycursor.execute(sql)
+
+        self.mydb.commit()
+
+        print(self.mycursor.rowcount, "Item Deleted.")
