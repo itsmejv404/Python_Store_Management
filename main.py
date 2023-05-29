@@ -78,8 +78,11 @@ class Dashboard(tk.Toplevel,):
             name = user_data[1]+user_data[2]
             storeProprietorFrame=Frame(self,bg='#dcedff')
             storeProprietorFrame.place(x=450,y = 0,width=800,height=675)
-            createNewProfile = Button(storeProprietorFrame,text='Add / Manage Employee',command=self.openAddNewProfileWindow).place(x = 50,y = 150,width=700)
-            manageInventory = Button(storeProprietorFrame,text='Inventory Management',command=self.openAddNewProfileWindow).place(x = 50,y = 150,width=700)
+            createNewProfile = Button(storeProprietorFrame,border=0,bg='#274C77',fg='white',font=('Verdana',15,'bold'),text='Add / Manage Employee',command=self.openAddNewProfileWindow).place(x = 50,y = 150,width=700)
+            manageInventory = Button(storeProprietorFrame,border=0,bg='#274C77',fg='white',font=('Verdana',15,'bold'),text='Inventory Management',command=self.openAddNewItem).place(x = 50,y = 250,width=700)
+            manageInventory = Button(storeProprietorFrame,border=0,bg='#274C77',fg='white',font=('Verdana',15,'bold'),text='Finance Management',command=self.openAddNewProfileWindow).place(x = 50,y = 350,width=700)
+            manageInventory = Button(storeProprietorFrame,border=0,bg='#274C77',fg='white',font=('Verdana',15,'bold'),text='Billing System',command=self.openAddNewProfileWindow).place(x = 50,y = 450,width=700)
+            manageInventory = Button(storeProprietorFrame,border=0,bg='#274C77',fg='white',font=('Verdana',15,'bold'),text='Log Management',command=self.openAddNewProfileWindow).place(x = 50,y = 550,width=700)
             
         elif(user_data[16] == 1):
             ## Store Manager
@@ -120,8 +123,15 @@ class Dashboard(tk.Toplevel,):
         self.withdraw()
         self.newProfile = AddNewProfile(self)
         self.newProfile.protocol("WM_DELETE_WINDOW", self.closeAddNewProfileWindow)
+    def openAddNewItem(self):
+        self.withdraw()
+        self.newItem = AddNewItem(self)
+        self.newItem.protocol("WM_DELETE_WINDOW", self.closeAddNewItemProfile)
     def closeAddNewProfileWindow(self):
         self.newProfile.withdraw()
+        self.deiconify()
+    def closeAddNewItemProfile(self):
+        self.newItem.withdraw()
         self.deiconify()
         # self.master.deiconify()
     def logout(self):
@@ -349,7 +359,7 @@ class AddNewProfile(tk.Toplevel):
         # import register
     def createEmployee(self):
         src_path = self.file_path
-        dst_path = r"D:/StoreManagement/pystoremanagement/employeeImages/" + self.txtPhoneNumber.get() + ".png"
+        dst_path = r"./employeeImages" + self.txtPhoneNumber.get() + ".png"
         shutil.copy(src_path, dst_path)
         print('Copied')
         print(self.file_path)
@@ -404,13 +414,13 @@ class AddNewProfile(tk.Toplevel):
         dst_path = 'Test Destination Path'
         if self.file_path == '' and (self.selectedDataset[14] != self.file_path):
             # src_path = self.selectedDataset[14]
-            dst_path = r"D:/StoreManagement/pystoremanagement/employeeImages/" + self.txtPhoneNumber.get() + ".png"
+            dst_path = r"./employeeImages" + self.txtPhoneNumber.get() + ".png"
             print('File path Method')
             shutil.move(str(self.selectedDataset[14]), dst_path)
         else:
             src_path = self.file_path
             print('Dataset Method')
-            dst_path = r"D:/StoreManagement/pystoremanagement/employeeImages/" + self.txtPhoneNumber.get() + ".png"
+            dst_path = r"./employeeImages" + self.txtPhoneNumber.get() + ".png"
             shutil.copy(src_path, dst_path)
 
         # if(self.txtPhoneNumber.get() != self.selectedDataset[7]):
@@ -479,17 +489,17 @@ class AddNewItem(tk.Toplevel):
         frame1=Frame(self,bg='white')
         frame1.place(x=0,y = 0,width=1280,height=720)
         title = Label(frame1,text='Create new Item',font=("Verdana",20,"bold"),bg="white",fg='#0373fc').place(x=50,y=30)
-        lblItemName = Label(frame1,text='First Name :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=80)
-        lblItemQuantity = Label(frame1,text='Last Name :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=110)
-        lblCostPerItem = Label(frame1,text='Age :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=140)
-        lblProfitPerItem = Label(frame1,text='Gender :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=170)
-        lblTotalItemCost = Label(frame1,text='Email :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=200)
-        lblTotalItemProfit = Label(frame1,text='Password :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=230)
-        lblItemCategory = Label(frame1,text='Phone Number :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=260)
-        self.btnClear = Button(frame1,text='Clear',border=0,font=("Verdana",10,"bold"),height=1,width=25, bg='#0373fc',fg='white',command=self.clear,state=NORMAL).place(x=130,y=350)
-        self.btnCreate = Button(frame1,text='Create',border=0,font=("Verdana",10,"bold"),width=25, bg='#0373fc',fg='white',state=NORMAL,command=self.createItem).place(x=380,y=350)
-        self.btnUpdate = Button(frame1,text='Update',border=0,font=("Verdana",10,"bold"),width=25, bg='#0373fc',fg='white',state=NORMAL,command=self.updateEmployee).place(x=630,y=350)
-        self.btnDelete = Button(frame1,text='Delete',border=0,font=("Verdana",10,"bold"),width=25, bg='#0373fc',fg='white',state=NORMAL,command=self.deleteEmployee).place(x=880,y=350)
+        lblItemName = Label(frame1,text='Item Name :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=80)
+        lblItemQuantity = Label(frame1,text='Item Quantity :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=110)
+        lblCostPerItem = Label(frame1,text='Cost Per Item :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=140)
+        lblProfitPerItem = Label(frame1,text='Profit Per Item :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=170)
+        lblTotalItemCost = Label(frame1,text='Total Item Cost :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=200)
+        lblTotalItemProfit = Label(frame1,text='Total Item Profit :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=230)
+        lblItemCategory = Label(frame1,text='Item Category :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=260)
+        self.btnClearItem = Button(frame1,text='Clear',border=0,font=("Verdana",10,"bold"),height=1,width=25, bg='#0373fc',fg='white',command=self.clear,state=NORMAL).place(x=130,y=350)
+        self.btnCreateItem = Button(frame1,text='Create',border=0,font=("Verdana",10,"bold"),width=25, bg='#0373fc',fg='white',state=NORMAL,command=self.createItem).place(x=380,y=350)
+        self.btnUpdateItem = Button(frame1,text='Update',border=0,font=("Verdana",10,"bold"),width=25, bg='#0373fc',fg='white',state=NORMAL,command=self.updateItem).place(x=630,y=350)
+        self.btnDeleteItem = Button(frame1,text='Delete',border=0,font=("Verdana",10,"bold"),width=25, bg='#0373fc',fg='white',state=NORMAL,command=self.deleteItem).place(x=880,y=350)
         self.itemNameStringVar = StringVar()
         self.itemQuantityStringVar = StringVar()
         self.costPerItemStringVar = StringVar()
@@ -500,38 +510,38 @@ class AddNewItem(tk.Toplevel):
         self.txtItemName = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black',textvariable=self.itemNameStringVar)
         self.txtItemQuantity = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black',textvariable=self.itemQuantityStringVar)
         self.txtCostPerItem = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black',textvariable=self.costPerItemStringVar)
+        self.txtProfitPerItem = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black',textvariable=self.profitPerItemStringVar)
+        self.txtTotalItemCost = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black',textvariable=self.totalItemCostStringVar)
+        self.txtTotalItemProfit = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black',textvariable=self.totalItemProfitStringVar)
         self.txtItemCategory = ttk.Combobox(frame1, width = 27, textvariable = self.itemCategoryStringVar)
         categories = ("Fresh Produce","Meat and Poultry","Seafood","Dairy Products","Bakery","Deli","Frozen Foods","Pantry Staples","Snacks","Beverages","Baby Care","Personal Care","Household Cleaning","Pet Supplies","Health and Wellness")
 
         self.txtItemCategory['values'] = categories
-        self.txtProfitPerItem = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black',textvariable=self.profitPerItemStringVar)
-        self.txtTotalItemCost = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black',textvariable=self.totalItemCostStringVar)
-        self.txtTotalItemProfit = Entry(frame1,font=("Verdana",10,"bold"),bg="white",fg='black',textvariable=self.totalItemProfitStringVar)
 
         columns = ('ID','Category Name','Item Name','Item Quantity','Total Item Price','Total Item Profit')
-        self.records_treeview = ttk.Treeview(frame1, columns=columns, show="headings")
+        self.records_treeviewItem = ttk.Treeview(frame1, columns=columns, show="headings")
         for col in columns:
-            self.records_treeview.heading(col, text=col,anchor=W)
-        self.records_treeview.pack()
+            self.records_treeviewItem.heading(col, text=col,anchor=W)
+        self.records_treeviewItem.pack()
 
         lstDB = Database()
         self.result = lstDB.retriveItemData()
         for i in range(len(self.result)):
-            self.records_treeview.insert("", "end", values=(self.result[i][0],self.result[i][1] + self.result[i][2],self.result[i][4],self.result[i][8],self.result[i][15],self.result[i][17]))
-        self.records_treeview.bind("<<TreeviewSelect>>", self.on_select)
-        self.records_treeview.place(x=50,y=400,width=1200,height=300)
-        self.txtItemName.place(x=170,y=80) 
-        self.txtItemQuantity.place(x=170,y=110)
-        self.txtCostPerItem.place(x=170,y=140)
-        self.txtProfitPerItem.place(x=170,y=170)
-        self.txtTotalItemCost.place(x=170,y=200)
-        self.txtTotalItemProfit.place(x=170,y=230)
-        self.txtItemCategory.place(x=170,y=260)
+            self.records_treeviewItem.insert("", "end", values=(self.result[i][0],self.result[i][1],self.result[i][2],self.result[i][3],self.result[i][6],self.result[i][7]))
+        self.records_treeviewItem.bind("<<TreeviewSelect>>", self.on_select)
+        self.records_treeviewItem.place(x=50,y=400,width=1200,height=300)
+        self.txtItemName.place(x=180,y=80) 
+        self.txtItemQuantity.place(x=180,y=110)
+        self.txtCostPerItem.place(x=180,y=140)
+        self.txtProfitPerItem.place(x=180,y=170)
+        self.txtTotalItemCost.place(x=180,y=200)
+        self.txtTotalItemProfit.place(x=180,y=230)
+        self.txtItemCategory.place(x=180,y=260)
     def on_select(self,event):
             
-            selected_item = self.records_treeview.selection()
+            selected_item = self.records_treeviewItem.selection()
             if selected_item:
-                values = self.records_treeview.item(selected_item)['values']
+                values = self.records_treeviewItem.item(selected_item)['values']
                 print('Menu Selected')
                 print(values)
                 self.selectedDataset = ''
@@ -542,102 +552,44 @@ class AddNewItem(tk.Toplevel):
                         print('Yep')
                     # else:
                         # print('Sup')
-                self.firstNameStringVar.set(self.selectedDataset[1])
-                self.lastNameStringVar.set(self.selectedDataset[2])
-                self.ageStringVar.set(self.selectedDataset[3])
-                self.genderStringVar.set(self.selectedDataset[4])
-                self.emailStringVar.set(self.selectedDataset[5])
-                self.passwordStringVar.set(self.selectedDataset[6])
-                self.phoneNumberStringVar.set(self.selectedDataset[7])
-                self.dateOfBirthStringVar.set(self.selectedDataset[8])
-                self.doorNumStringVar.set(self.selectedDataset[9])
-                self.streetStringVar.set(self.selectedDataset[10])
-                self.areaStringVar.set(self.selectedDataset[11])
-                self.cityStringVar.set(self.selectedDataset[12])
-                self.stateStringVar.set(self.selectedDataset[13])
-                image = Image.open(self.selectedDataset[14])
-                image.thumbnail((400, 200))
-                photo = ImageTk.PhotoImage(image)
-                self.image_label.config(image=photo)
-                self.image_label.image = photo
-                # self.photoStringVar.set(self.selectedDataset[1])
-                self.roleStringVar.set(self.selectedDataset[15])
-                self.gradeStringVar.set(self.selectedDataset[16])
-                self.salaryStringVar.set(self.selectedDataset[17])
-                self.dateOfJoiningStringVar.set(self.selectedDataset[18])
-                self.remarksStringVar.set(self.selectedDataset[19])
+                self.itemNameStringVar.set(self.selectedDataset[2])
+                self.itemQuantityStringVar.set(self.selectedDataset[3])
+                self.costPerItemStringVar.set(self.selectedDataset[4])
+                self.profitPerItemStringVar.set(self.selectedDataset[5])
+                self.totalItemCostStringVar.set(self.selectedDataset[6])
+                self.totalItemProfitStringVar.set(self.selectedDataset[7])
+                self.itemCategoryStringVar.set(self.selectedDataset[1])
     def on_combobox_change(self,event):
-        print('Management Roles Modified')
+        print('Item Category Modified')
         selected_role = self.txtRole.get()
-        roles = ('Store Proprietor','Store Manager','Store Assistant Manager','Financial Manager','Procurement Manager','Department Sales Man','Cashiers','Janitor')
-        grades = (0,1,2,3,4,5,6,7)
-        self.gradeStringVar.set(roles.index(selected_role))
-    def pick_image(self):
-        self.file_path = filedialog.askopenfilename(initialdir='',title="Select a Photo",filetypes=(("PNG Files","*.png"),("JPG Files","*.jpg"),('All Files','*.*')))
-        image = Image.open(self.file_path)
-        image.thumbnail((400, 200))
-        photo = ImageTk.PhotoImage(image)
-        self.image_label.config(image=photo)
-        self.image_label.image = photo
+        roles = ('ID','Category Name','Item Name','Item Quantity','Total Item Price','Total Item Profit')
+        # grades = (0,1,2,3,4,5,6,7)
+        # self.gradeStringVar.set(roles.index(selected_role))
     def clear(self):
         
-        image = Image.open('images/nopictureselected.png')
-        image.thumbnail((400, 200))
-        photo = ImageTk.PhotoImage(image)
-        self.image_label.config(image=photo)
-        self.image_label.image = photo
-        self.txtFirstName.delete(0,END)
-        self.txtLastName.delete(0,END)
-        self.txtAge.delete(0,END)
-        self.txtGender.delete(0,END)
-        self.txtEmail.delete(0,END)
-        self.txtPassword.delete(0,END)
-        self.txtPhoneNumber.delete(0,END)
-        self.txtDateOfBirth.delete(0,END)
-        self.txtDoorNum.delete(0,END)
-        self.txtStreet.delete(0,END)
-        self.txtArea.delete(0,END)
-        self.txtCity.delete(0,END)
-        self.txtState.delete(0,END)
-        self.txtRole.delete(0,END)
-        self.txtGrade.delete(0,END)
-        self.txtSalary.delete(0,END)
-        self.txtDateOfJoining.delete(0,END)
-        self.txtRemarks.delete(0,END)
-        self.btnUpdate['state'] = NORMAL
-
+        self.txtItemName.delete(0,END)
+        self.txtItemQuantity.delete(0,END)
+        self.txtCostPerItem.delete(0,END)
+        self.txtProfitPerItem.delete(0,END)
+        self.txtTotalItemCost.delete(0,END)
+        self.txtTotalItemProfit.delete(0,END)
+        self.txtItemCategory.delete(0,END)
         # self.root.destroy()
         # import register
     def createItem(self):
         db = Database()
-        db.createEmployee(self.txtFirstName.get(),self.txtLastName.get(),self.txtAge.get(),self.txtGender.get(),self.txtEmail.get(),self.txtPassword.get(),self.txtPhoneNumber.get(),self.txtDateOfBirth.get(),self.txtDoorNum.get(),self.txtStreet.get(),self.txtArea.get(),self.txtCity.get(),self.txtState.get(),dst_path,self.txtRole.get(),self.txtGrade.get(),self.txtSalary.get(),self.txtDateOfJoining.get(),self.txtRemarks.get())
-        image = Image.open('images/nopictureselected.png')
-        image.thumbnail((400, 200))
-        photo = ImageTk.PhotoImage(image)
-        self.image_label.config(image=photo)
-        self.image_label.image = photo
-        self.txtFirstName.delete(0,END)
-        self.txtLastName.delete(0,END)
-        self.txtAge.delete(0,END)
-        self.txtGender.delete(0,END)
-        self.txtEmail.delete(0,END)
-        self.txtPassword.delete(0,END)
-        self.txtPhoneNumber.delete(0,END)
-        self.txtDateOfBirth.delete(0,END)
-        self.txtDoorNum.delete(0,END)
-        self.txtStreet.delete(0,END)
-        self.txtArea.delete(0,END)
-        self.txtCity.delete(0,END)
-        self.txtState.delete(0,END)
-        self.txtRole.delete(0,END)
-        self.txtGrade.delete(0,END)
-        self.txtSalary.delete(0,END)
-        self.txtDateOfJoining.delete(0,END)
-        self.txtRemarks.delete(0,END)
+        db.createItem(self.txtItemName.get(),self.txtItemQuantity.get(),self.txtCostPerItem.get(),self.txtProfitPerItem.get(),self.txtTotalItemCost.get(),self.txtTotalItemProfit.get(),self.txtItemCategory.get())
+        self.txtItemName.delete(0,END)
+        self.txtItemQuantity.delete(0,END)
+        self.txtCostPerItem.delete(0,END)
+        self.txtProfitPerItem.delete(0,END)
+        self.txtTotalItemCost.delete(0,END)
+        self.txtTotalItemProfit.delete(0,END)
+        self.txtItemCategory.delete(0,END)
         self.close_window()
     def updateItem(self):
         db = Database()
-        db.updateItem(self.txtFirstName.get(),self.txtLastName.get(),self.txtAge.get(),self.txtGender.get(),self.txtEmail.get(),self.txtPassword.get(),self.txtPhoneNumber.get(),self.txtDateOfBirth.get(),self.txtDoorNum.get(),self.txtStreet.get(),self.txtArea.get(),self.txtCity.get(),self.txtState.get(),self.txtRole.get(),self.txtGrade.get(),self.txtSalary.get(),self.txtDateOfJoining.get(),self.txtRemarks.get(),self.selectedDataset[0],dst_path)
+        db.updateItem(self.txtItemName.get(),self.txtItemQuantity.get(),self.txtCostPerItem.get(),self.txtProfitPerItem.get(),self.txtTotalItemCost.get(),self.txtTotalItemProfit.get(),self.txtItemCategory.get(),self.selectedDataset[0])
         self.close_window()
     def deleteItem(self):
         id = self.selectedDataset[0]
