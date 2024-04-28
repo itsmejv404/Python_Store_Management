@@ -25,14 +25,10 @@ class Database:
         if self.emp_password == myresult[0][6]:
             return True,myresult[0]
         else:
-            return False,0
-    def retriveEmployeeData(self):
-        self.mycursor = self.mydb.cursor()
-        sql = "SELECT * FROM employees"
-        self.mycursor.execute(sql)
-        myresult = self.mycursor.fetchall()
-        print(myresult[0])
-        return myresult
+            return False
+    
+    
+
     def createEmployee(self,txtFirstName,txtLastName,txtAge,txtGender,txtEmail,txtPassword,txtPhoneNumber,txtDateOfBirth,txtDoorNum,txtStreet,txtArea,txtCity,txtState,file_path,txtRole,txtGrade,txtSalary,txtDateOfJoining,txtRemarks):
         self.mycursor = self.mydb.cursor()
         self.txtFirstName = txtFirstName
@@ -154,3 +150,72 @@ class Database:
         self.mydb.commit()
 
         print(self.mycursor.rowcount, "Item Deleted.")
+    def createFinancialLog(self,txtTypeOfTransaction,txtUsername,txtNetPrice):
+        self.mycursor = self.mydb.cursor()
+        transactionType = txtTypeOfTransaction
+        name = txtUsername
+        price = txtNetPrice
+        sql = "INSERT INTO financiallogs (TypeOfTransaction,NameEntry,Sign,MoneyTransaction) VALUES (%s,%s,%s,%s)"
+        val = (transactionType,name,'-',price)
+        self.mycursor.execute(sql, val)
+        sql = "SELECT * FROM storefinancialadmin LIMIT 1"
+        self.mycursor.execute(sql)
+        myresult = self.mycursor.fetchall()
+        sql = "UPDATE storefinancialadmin SET BalanceAmount = %s WHERE ID = %s"
+        val = (myresult[0][1] - price,1)
+        self.mycursor.execute(sql, val)
+
+        self.mydb.commit()
+
+        print(self.mycursor.rowcount, "Price log inserted.")
+    def refundFinancialLog(self,txtTypeOfTransaction,txtUsername,txtNetPrice):
+        self.mycursor = self.mydb.cursor()
+        transactionType = txtTypeOfTransaction
+        name = txtUsername
+        price = txtNetPrice
+        sql = "INSERT INTO financiallogs (TypeOfTransaction,NameEntry,Sign,MoneyTransaction) VALUES (%s,%s,%s,%s)"
+        val = (transactionType,name,'+',price)
+        self.mycursor.execute(sql, val)
+        sql = "SELECT * FROM storefinancialadmin LIMIT 1"
+        self.mycursor.execute(sql)
+        myresult = self.mycursor.fetchall()
+        sql = "UPDATE storefinancialadmin SET BalanceAmount = %s WHERE ID = %s"
+        val = (myresult[0][1] + price,1)
+        self.mycursor.execute(sql, val)
+
+        self.mydb.commit()
+
+        print(self.mycursor.rowcount, "Price log inserted.")
+    def retriveEmployeeData(self):
+        self.mycursor = self.mydb.cursor()
+        sql = "SELECT * FROM employees"
+        self.mycursor.execute(sql)
+        myresult = self.mycursor.fetchall()
+        print(myresult[0])
+        return myresult
+    def retriveTransactions(self):
+        self.mycursor = self.mydb.cursor()
+        sql = "SELECT * FROM financiallogs"
+        self.mycursor.execute(sql)
+        myresult = self.mycursor.fetchall()
+        print(myresult[0])
+        return myresult
+    def totalBalance(self):
+        self.mycursor = self.mydb.cursor()
+        sql = 'SELECT * FROM storefinancialadmin LIMIT 1'
+        self.mycursor.execute(sql)
+        myresult = self.mycursor.fetchall()
+        print(myresult)
+        return myresult
+    def incomeMoney(self):
+        self.mycursor = self.mydb.cursor()
+        sql = 'SELECT * FROM financiallogs WHERE Sign = "+"'
+        self.mycursor.execute(sql)
+        myresult = self.mycursor.fetchall()
+        return myresult
+    def expenseMoney(self):
+        self.mycursor = self.mydb.cursor()
+        sql = 'SELECT * FROM financiallogs WHERE Sign = "-"'
+        self.mycursor.execute(sql)
+        myresult = self.mycursor.fetchall()
+        return myresult

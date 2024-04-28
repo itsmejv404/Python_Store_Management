@@ -70,6 +70,7 @@ class Dashboard(tk.Toplevel,):
         photo = ImageTk.PhotoImage(image)
         self.image_label.config(image=photo)
         self.image_label.image = photo
+        self.databaseUserNameText = text=user_data[1]+" "+user_data[2]
         self.lblDashboardName = Label(frame1,text=user_data[1]+" "+user_data[2],justify=CENTER,bg='#274C77',fg='white',font=('Verdana',20,'bold')).place(x=0,y=450,width=450)
         self.lblDashboardRole = Label(frame1,text=user_data[15],justify=CENTER,bg='#274C77',fg='white',font=('Verdana',10,'bold')).place(x=0,y=500,width=450)
         btnDashboardLogout = Button(frame1,text='Log Out',justify=CENTER,bg='#dcedff',fg='#274C77',command=self.logout,font=('Verdana',15,'bold')).place(x=25,y=580,width=400)
@@ -80,9 +81,8 @@ class Dashboard(tk.Toplevel,):
             storeProprietorFrame.place(x=450,y = 0,width=800,height=675)
             createNewProfile = Button(storeProprietorFrame,border=0,bg='#274C77',fg='white',font=('Verdana',15,'bold'),text='Add / Manage Employee',command=self.openAddNewProfileWindow).place(x = 50,y = 150,width=700)
             manageInventory = Button(storeProprietorFrame,border=0,bg='#274C77',fg='white',font=('Verdana',15,'bold'),text='Inventory Management',command=self.openAddNewItem).place(x = 50,y = 250,width=700)
-            manageInventory = Button(storeProprietorFrame,border=0,bg='#274C77',fg='white',font=('Verdana',15,'bold'),text='Finance Management',command=self.openAddNewProfileWindow).place(x = 50,y = 350,width=700)
-            manageInventory = Button(storeProprietorFrame,border=0,bg='#274C77',fg='white',font=('Verdana',15,'bold'),text='Billing System',command=self.openAddNewProfileWindow).place(x = 50,y = 450,width=700)
-            manageInventory = Button(storeProprietorFrame,border=0,bg='#274C77',fg='white',font=('Verdana',15,'bold'),text='Log Management',command=self.openAddNewProfileWindow).place(x = 50,y = 550,width=700)
+            manageFinance = Button(storeProprietorFrame,border=0,bg='#274C77',fg='white',font=('Verdana',15,'bold'),text='Finance Management',command=self.openFinancialStatus).place(x = 50,y = 350,width=700)
+            manageBilling = Button(storeProprietorFrame,border=0,bg='#274C77',fg='white',font=('Verdana',15,'bold'),text='Billing System',command=self.openAddNewProfileWindow).place(x = 50,y = 450,width=700)
             
         elif(user_data[16] == 1):
             ## Store Manager
@@ -125,7 +125,7 @@ class Dashboard(tk.Toplevel,):
         self.newProfile.protocol("WM_DELETE_WINDOW", self.closeAddNewProfileWindow)
     def openAddNewItem(self):
         self.withdraw()
-        self.newItem = AddNewItem(self)
+        self.newItem = AddNewItem(self,self.databaseUserNameText)
         self.newItem.protocol("WM_DELETE_WINDOW", self.closeAddNewItemProfile)
     def closeAddNewProfileWindow(self):
         self.newProfile.withdraw()
@@ -134,6 +134,13 @@ class Dashboard(tk.Toplevel,):
         self.newItem.withdraw()
         self.deiconify()
         # self.master.deiconify()
+    def openFinancialStatus(self):
+        self.withdraw()
+        self.financialStatus = FinancialStatus(self)
+        self.financialStatus.protocol('WM_DELETE_WINDOW',self.closeFinancialStatus)
+    def closeFinancialStatus(self):
+        self.financialStatus.withdraw()
+        self.deiconify()
     def logout(self):
         self.master.destroy()
 class AddNewProfile(tk.Toplevel):
@@ -478,8 +485,9 @@ class AddNewProfile(tk.Toplevel):
         self.destroy()
         self.master.deiconify()
 class AddNewItem(tk.Toplevel):
-    def __init__(self, root):
+    def __init__(self, root,databaseUsername):
         super().__init__(root)
+        self.databaseUsername = databaseUsername
         self.title('Create a new Item')
         self.wm_iconbitmap('images/icons.ico')
         self.geometry("1280x720+0+0")
@@ -498,8 +506,7 @@ class AddNewItem(tk.Toplevel):
         lblItemCategory = Label(frame1,text='Item Category :',font=("Verdana",10,"bold"),bg="white",fg='#0373fc').place(x=50,y=260)
         self.btnClearItem = Button(frame1,text='Clear',border=0,font=("Verdana",10,"bold"),height=1,width=25, bg='#0373fc',fg='white',command=self.clear,state=NORMAL).place(x=130,y=350)
         self.btnCreateItem = Button(frame1,text='Create',border=0,font=("Verdana",10,"bold"),width=25, bg='#0373fc',fg='white',state=NORMAL,command=self.createItem).place(x=380,y=350)
-        self.btnUpdateItem = Button(frame1,text='Update',border=0,font=("Verdana",10,"bold"),width=25, bg='#0373fc',fg='white',state=NORMAL,command=self.updateItem).place(x=630,y=350)
-        self.btnDeleteItem = Button(frame1,text='Delete',border=0,font=("Verdana",10,"bold"),width=25, bg='#0373fc',fg='white',state=NORMAL,command=self.deleteItem).place(x=880,y=350)
+        self.btnDeleteItem = Button(frame1,text='Delete',border=0,font=("Verdana",10,"bold"),width=25, bg='#0373fc',fg='white',state=NORMAL,command=self.deleteItem).place(x=630,y=350)
         self.itemNameStringVar = StringVar()
         self.itemQuantityStringVar = StringVar()
         self.costPerItemStringVar = StringVar()
@@ -525,7 +532,13 @@ class AddNewItem(tk.Toplevel):
         self.records_treeviewItem.pack()
 
         lstDB = Database()
-        self.result = lstDB.retriveItemData()
+        try:
+            self.result = lstDB.retriveItemData()
+        except IndexError:
+            db = Database()
+            db.createItem('Example Item',0,0,0,0,0,'Example')
+            self.records_treeviewItem.insert("", "end", values=('0','CategoryName','ItemName',0,0,0))
+            self.result = lstDB.retriveItemData()
         for i in range(len(self.result)):
             self.records_treeviewItem.insert("", "end", values=(self.result[i][0],self.result[i][1],self.result[i][2],self.result[i][3],self.result[i][6],self.result[i][7]))
         self.records_treeviewItem.bind("<<TreeviewSelect>>", self.on_select)
@@ -577,8 +590,10 @@ class AddNewItem(tk.Toplevel):
         # self.root.destroy()
         # import register
     def createItem(self):
+        
         db = Database()
         db.createItem(self.txtItemName.get(),self.txtItemQuantity.get(),self.txtCostPerItem.get(),self.txtProfitPerItem.get(),self.txtTotalItemCost.get(),self.txtTotalItemProfit.get(),self.txtItemCategory.get())
+        db.createFinancialLog('Inventory',self.databaseUsername,(int(self.txtCostPerItem.get()) * int(self.txtItemQuantity.get())))
         self.txtItemName.delete(0,END)
         self.txtItemQuantity.delete(0,END)
         self.txtCostPerItem.delete(0,END)
@@ -595,12 +610,72 @@ class AddNewItem(tk.Toplevel):
         id = self.selectedDataset[0]
         db = Database()
         print(id)
+        db.refundFinancialLog('Inventory',self.databaseUsername,(int(self.txtCostPerItem.get()) * int(self.txtItemQuantity.get())))
         db.deleteItem(id)
         self.close_window()
     def close_window(self):
         self.destroy()
         self.master.deiconify()
+class FinancialStatus(tk.Toplevel):
+    def __init__(self, root):
+        super().__init__(root)
+        self.title('Financial Status')
+        self.wm_iconbitmap('images/icons.ico')
+        self.geometry("1280x720+0+0")
+        self.maxsize(1280,720)
+        self.minsize(1280,720)
+        self.file_path = ''
+        frame1=Frame(self,bg='white')
+        frame1.place(x=0,y = 0,width=1280,height=720)
+        db = Database()
+        money = db.totalBalance()
+        ExpenseMoney = db.expenseMoney()
+        Incomemoney = db.incomeMoney()
+        print(ExpenseMoney)
+        print(Incomemoney)
+        print(money)
+        totalIncomeMoney = 0
+        totalExpenseMoney = 0
+        for i in Incomemoney:
+            totalIncomeMoney += i[-1]
+        for i in ExpenseMoney:
+            totalExpenseMoney += i[-1]
+        title = Label(frame1,text='Financial Status',font=("Verdana",20,"bold"),bg="white",fg='#0373fc').place(x=50,y=30)
+        amountBalance = Label(frame1,text=money[0][1],font=("Verdana",75,"bold"),bg="white",fg='#0000ff').place(x=50,y=100)
 
+        amountPositive = Label(frame1,text=totalExpenseMoney,font=("Verdana",30,"bold"),bg="white",fg='#ff0000').place(x=150,y=200)
+        amountNegative = Label(frame1,text=totalIncomeMoney,font=("Verdana",30,"bold"),bg="white",fg='#00ff00').place(x=150,y=300)
+
+        columns = ('TransactionBy','Name','Entry Date','Amount')
+        self.records_treeview = ttk.Treeview(frame1, columns=columns, show="headings")
+        for col in columns:
+            self.records_treeview.heading(col, text=col,anchor=W)
+        self.records_treeview.pack()
+        
+        # Insert sample data
+        lstDB = Database()
+        self.result = lstDB.retriveTransactions()
+        for i in range(len(self.result)):
+            self.records_treeview.insert("", "end", values=(self.result[i][1],self.result[i][2],self.result[i][3],self.result[i][4] + str(self.result[i][5])))
+        self.records_treeview.bind("<<TreeviewSelect>>", self.on_select)
+        self.records_treeview.place(x=50,y=400,width=1200,height=300)
+        
+    def on_select(self,event):
+            
+            selected_item = self.records_treeview.selection()
+            if selected_item:
+                values = self.records_treeview.item(selected_item)['values']
+                print('Menu Selected')
+                print(values)
+                self.selectedDataset = ''
+                for i in self.result:
+                    if values[0] == i[0]:
+                        self.selectedDataset = i
+                        
+                        print('Yep')
+                    # else:
+                        # print('Sup')
+                
 # Create the main window
 root = LoginScreen()
 root.mainloop()
